@@ -29,6 +29,7 @@ profile  safe   requests 41
 
 ### Termux
 
+```bash
 pkg install python git openssl
 git clone https://github.com/Ahmadhsn580/sentinel-verify
 cd sentinel-verify
