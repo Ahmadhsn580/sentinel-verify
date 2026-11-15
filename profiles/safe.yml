@@ -1,0 +1,9 @@
+# Read-only profile. Safe against production systems.
+description: Read-only, 300 requests, 5 req/s
+rate: 5
+max_requests: 300
+timeout: 10
+concurrency: 6
+retries: 2
+max_tier: safe
+follow_redirects: true

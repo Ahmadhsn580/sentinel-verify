@@ -1,0 +1,8 @@
+description: Adds payload probing, 800 requests
+rate: 8
+max_requests: 800
+timeout: 10
+concurrency: 8
+retries: 2
+max_tier: standard
+follow_redirects: true

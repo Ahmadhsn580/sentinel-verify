@@ -1,0 +1,8 @@
+description: Timing probes and cache checks, 2000 requests
+rate: 15
+max_requests: 2000
+timeout: 15
+concurrency: 12
+retries: 3
+max_tier: aggressive
+follow_redirects: true
