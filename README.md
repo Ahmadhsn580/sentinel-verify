@@ -29,10 +29,10 @@ profile  safe   requests 41
 
 ### Termux
 
-```bash
 pkg install python git openssl
-git clone https://github.com/sentinel-verify/sentinel-verify
-cd sentinel-verify && ./install.sh
+git clone https://github.com/Ahmadhsn580/sentinel-verify
+cd sentinel-verify
+bash install.sh
 ```
 
 If `venv` fails on an older Termux, run `pkg install python-venv`, or use
@@ -41,8 +41,9 @@ If `venv` fails on an older Termux, run `pkg install python-venv`, or use
 ### Linux / macOS
 
 ```bash
-git clone https://github.com/sentinel-verify/sentinel-verify
-cd sentinel-verify && ./install.sh
+git clone https://github.com/Ahmadhsn580/sentinel-verify
+cd sentinel-verify
+bash install.sh
 ```
 
 ### Quickstart
