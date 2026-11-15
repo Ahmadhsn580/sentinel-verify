@@ -3,6 +3,7 @@ from __future__ import annotations
 import socket
 import threading
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+from urllib.parse import unquote
 
 import pytest
 
@@ -22,7 +23,7 @@ class Handler(BaseHTTPRequestHandler):
             self.end_headers()
             return
         if path == "/xss":
-            query = self.path.split("?", 1)[-1]
+            query = unquote(self.path.split("?", 1)[-1])
             body = f"<html><body>{query}</body></html>".encode()
             self.send_response(200)
             self.send_header("Content-Type", "text/html")

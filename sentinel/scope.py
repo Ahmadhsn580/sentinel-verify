@@ -65,7 +65,7 @@ class RateLimiter:
         if rate <= 0:
             raise ValueError("rate must be > 0")
         self.rate = rate
-        self._tokens = float(rate)
+        self._tokens = 1.0
         self._updated = time.monotonic()
         self._lock = asyncio.Lock()
 
@@ -73,7 +73,7 @@ class RateLimiter:
         async with self._lock:
             while True:
                 now = time.monotonic()
-                self._tokens = min(self.rate, self._tokens + (now - self._updated) * self.rate)
+                self._tokens = min(1.0, self._tokens + (now - self._updated) * self.rate)
                 self._updated = now
                 if self._tokens >= 1.0:
                     self._tokens -= 1.0
