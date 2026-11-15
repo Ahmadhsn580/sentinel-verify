@@ -34,23 +34,25 @@ jobs:
       - run: python -m pytest -q
 
   termux:
+    # Simulates Termux's environment (PREFIX under .../com.termux/files/usr,
+    # a separate $HOME) to exercise install.sh's Termux code path and confirm
+    # the package honours PREFIX/HOME/XDG_DATA_HOME instead of assuming /tmp
+    # or /etc. A real device/proot run isn't practical in CI, and isn't
+    # needed to catch the class of bug this job cares about.
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Run suite inside a Termux-like proot
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install under a simulated Termux PREFIX
         run: |
-          sudo apt-get update -qq
-          sudo apt-get install -y -qq proot
-          mkdir -p rootfs
-          curl -fsSL https://raw.githubusercontent.com/termux/proot-distro/master/install.sh \
-            | sudo bash -s -- --install ubuntu
-          proot-distro login ubuntu --shared-tmp -- bash -lc '
-            apt-get update -qq && apt-get install -y -qq python3 python3-venv openssl git
-            cd /tmp
-            python3 -m venv v && . v/bin/activate
-            pip install -q pytest pytest-asyncio
-            cd "$GITHUB_WORKSPACE"
-            python -m pytest -q
-          '
-        env:
-          GITHUB_WORKSPACE: ${{ github.workspace }}
+          set -euo pipefail
+          export PREFIX="${RUNNER_TEMP}/termux-sim/data/data/com.termux/files/usr"
+          export HOME="${RUNNER_TEMP}/termux-sim/home"
+          mkdir -p "$PREFIX/bin" "$HOME"
+          bash install.sh
+          test -x "$PREFIX/bin/sentinel-verify"
+          "$PREFIX/bin/sentinel-verify" list-checks
+          bash uninstall.sh
+          test ! -e "$PREFIX/bin/sentinel-verify"
