@@ -16,12 +16,10 @@ def test_delay_significance_needs_samples() -> None:
 
 
 def test_report_counts_and_worst(server_url: str) -> None:
-    import asyncio
 
     from sentinel.http import HttpClient
-    from sentinel.models import Confidence, Severity
+    from sentinel.models import Confidence, ParsedTarget, Severity
     from sentinel.scope import Budget, RateLimiter, ScopePolicy
-    from sentinel.models import ParsedTarget
 
     target = ParsedTarget.parse(server_url)
     client = HttpClient(

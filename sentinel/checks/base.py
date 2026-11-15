@@ -17,9 +17,7 @@ class Check(ABC):
     description: str = ""
 
     def applicable(self, engine: Engine) -> bool:
-        if self.needs_https and engine.target.scheme != "https":
-            return False
-        return True
+        return not (self.needs_https and engine.target.scheme != "https")
 
     @abstractmethod
     async def run(self, engine: Engine) -> None:
@@ -39,6 +37,19 @@ def register(cls: type[Check]) -> type[Check]:
 
 
 def all_checks() -> dict[str, type[Check]]:
-    from . import api, cookies, cors, dns, exposure, fingerprint, headers, host, inject, methods, redirect, transport  # noqa: F401
+    from . import (  # noqa: F401
+        api,
+        cookies,
+        cors,
+        dns,
+        exposure,
+        fingerprint,
+        headers,
+        host,
+        inject,
+        methods,
+        redirect,
+        transport,
+    )
 
     return REGISTRY

@@ -5,7 +5,7 @@ import asyncio
 import pytest
 
 from sentinel.http import HttpClient, HttpError
-from sentinel.scope import Budget, RateLimiter, ScopePolicy
+from sentinel.scope import Budget, BudgetExceeded, RateLimiter, ScopePolicy
 
 
 def make_client(url: str) -> HttpClient:
@@ -43,7 +43,7 @@ def test_budget_enforced(server_url: str) -> None:
     client = make_client(server_url)
     client.budget = Budget(1)
     asyncio.run(client.request("GET", server_url + "/"))
-    with pytest.raises(Exception):
+    with pytest.raises(BudgetExceeded):
         asyncio.run(client.request("GET", server_url + "/"))
 
 

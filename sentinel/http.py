@@ -6,10 +6,11 @@ Every network call in the project funnels through here.
 from __future__ import annotations
 
 import asyncio
+import contextlib
 import hashlib
 import ssl
+from collections.abc import Iterable
 from dataclasses import dataclass, field
-from typing import Iterable
 from urllib.parse import urlsplit
 
 from .scope import Budget, RateLimiter, ScopePolicy
@@ -269,10 +270,8 @@ class HttpClient:
                 )
             finally:
                 writer.close()
-                try:
+                with contextlib.suppress(OSError, ssl.SSLError):
                     await writer.wait_closed()
-                except (OSError, ssl.SSLError):
-                    pass
 
         attempt = 0
         while True:

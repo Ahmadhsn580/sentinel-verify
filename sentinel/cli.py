@@ -10,7 +10,8 @@ from datetime import datetime, timezone
 
 from . import __version__, profiles
 from .checks.base import all_checks
-from .diff import compare, render as render_diff
+from .diff import compare
+from .diff import render as render_diff
 from .http import HttpClient, HttpError
 from .models import (
     PROFILE_RANK,
@@ -170,16 +171,14 @@ async def _scan(args: argparse.Namespace) -> int:
 
     output = render_report(report, args.format, color=sys.stdout.isatty())
     if args.out:
-        with open(args.out, "w", encoding="utf-8") as handle:
-            handle.write(output)
+        await asyncio.to_thread(_write_text, args.out, output)
         print(f"report written to {args.out}", file=sys.stderr)
     else:
         print(output)
 
     if args.baseline:
         current = args.out or _default_out()
-        with open(current, "w", encoding="utf-8") as handle:
-            handle.write(report.to_json())
+        await asyncio.to_thread(_write_text, current, report.to_json())
         print(render_diff(compare(args.baseline, current), color=sys.stdout.isatty()))
 
     if args.fail_on:
@@ -189,6 +188,11 @@ async def _scan(args: argparse.Namespace) -> int:
         if worst is not None and SEVERITY_RANK[worst] >= SEVERITY_RANK[threshold]:
             return EXIT_FINDINGS
     return EXIT_OK
+
+
+def _write_text(path: str, text: str) -> None:
+    with open(path, "w", encoding="utf-8") as handle:
+        handle.write(text)
 
 
 def _default_out() -> str:

@@ -37,7 +37,7 @@ class MinTlsVersion(Check):
                 confidence=Confidence.CONFIRMED,
                 cwe=self.cwe,
                 description=f"The server completed a handshake negotiating {label}.",
-                remediation=f"Set the minimum TLS version to 1.2 in the listener configuration.",
+                remediation="Set the minimum TLS version to 1.2 in the listener configuration.",
                 response=resp,
             )
             return

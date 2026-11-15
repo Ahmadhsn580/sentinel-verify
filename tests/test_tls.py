@@ -5,7 +5,6 @@ import ssl
 import subprocess
 import threading
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
-from pathlib import Path
 
 import pytest
 
@@ -31,9 +30,11 @@ def tls_url(tmp_path_factory: pytest.TempPathFactory) -> str:
     directory = tmp_path_factory.mktemp("tls")
     cert = directory / "cert.pem"
     key = directory / "key.pem"
-    subprocess.run(
+    openssl = shutil.which("openssl")
+    assert openssl is not None
+    subprocess.run(  # noqa: S603 - fixed argv, no untrusted input
         [
-            "openssl", "req", "-x509", "-newkey", "rsa:2048", "-nodes",
+            openssl, "req", "-x509", "-newkey", "rsa:2048", "-nodes",
             "-keyout", str(key), "-out", str(cert), "-days", "1",
             "-subj", "/CN=localhost",
             "-addext", "subjectAltName=DNS:localhost,IP:127.0.0.1",
